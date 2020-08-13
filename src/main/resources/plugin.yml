@@ -3,8 +3,8 @@ version: 1.0-SNAPSHOT
 description: This is a simple Bukkit Plugin
 author: Rodrigo Sanches Devigo
 
-main: io.github.rsdevigo.Main
-
+main: io.github.rsdevigo.iTrekkingIF
+database: true
 commands:
   Hello:
     description: Shows a hello message to the player
