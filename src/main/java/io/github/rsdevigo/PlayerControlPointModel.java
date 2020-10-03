@@ -44,7 +44,7 @@ class PlayerControlPointModel {
             List<Map<?, ?>> pcpa = objm.readValue(response, new TypeReference<List<Map<?, ?>>>() {
             });
             int i;
-            for (i = 0; i < pcpa.size(); i++) {
+            for (i = 0; i < pcpa.size();) {
                 Map<?, ?> playerControlPointMap = pcpa.get(i);
                 Map<?, ?> ponto_controle = (Map<?, ?>) playerControlPointMap.get("ponto_de_controle");
                 PlayerControlPoint pcp = new PlayerControlPoint();

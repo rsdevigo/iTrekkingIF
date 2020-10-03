@@ -17,7 +17,7 @@ class ControlPointModel {
             List<Map<?, ?>> cpa = objm.readValue(response, new TypeReference<List<Map<?, ?>>>() {
             });
             int i;
-            for (i = 0; i < cpa.size(); i++) {
+            for (i = 0; i < cpa.size();) {
                 Map<?, ?> controlPointMap = cpa.get(i);
                 ControlPoint cp = new ControlPoint();
                 cp.setId((int) controlPointMap.get((String) "id"));
