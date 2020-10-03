@@ -1,56 +1,43 @@
 package io.github.rsdevigo;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.ResultSet;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.kevinsawicki.http.HttpRequest;
+import java.util.List;
+import java.util.Map;
 
 class ControlPointModel {
 
-  public static ControlPoint getControlPoint(int x, int y, int z) {
-    Statement stmt = null;
-    ResultSet rs = null;
+    public static ControlPoint getControlPoint(int x, int y, int z) {
 
-    try {
-        stmt = iTrekkingIF.connection.createStatement();
-        rs = stmt.executeQuery("SELECT * FROM control_point WHERE x = "+String.valueOf(x)+" AND y = "+String.valueOf(y)+" AND z = "+String.valueOf(z)+" LIMIT 1");
+        String response = HttpRequest.get("http://localhost:1337/ponto-de-controles?x=" + Integer.toString(x) + "&y="
+                + Integer.toString(y) + "&z=" + Integer.toString(z) + "&_limit=1").body();
+        ObjectMapper objm = new ObjectMapper();
+        try {
+            List<Map<?, ?>> cpa = objm.readValue(response, new TypeReference<List<Map<?, ?>>>() {
+            });
+            int i;
+            for (i = 0; i < cpa.size(); i++) {
+                Map<?, ?> controlPointMap = cpa.get(i);
+                ControlPoint cp = new ControlPoint();
+                cp.setId((int) controlPointMap.get((String) "id"));
+                cp.setX((int) controlPointMap.get((String) "x"));
+                cp.setY((int) controlPointMap.get((String) "y"));
+                cp.setZ((int) controlPointMap.get((String) "z"));
+                cp.setNome((String) controlPointMap.get((String) "nome"));
+                System.out.println(cp.getId());
+                System.out.println(cp.getNome());
+                System.out.println(cp.getX());
+                System.out.println(cp.getY());
+                System.out.println(cp.getZ());
+                return cp;
+            }
 
-        while(rs.next()){
-          ControlPoint cp = new ControlPoint();
-          cp.setId(rs.getInt("id"));
-          cp.setX(rs.getInt("x"));
-          cp.setY(rs.getInt("y"));
-          cp.setZ(rs.getInt("z"));
-          cp.setName(rs.getString("name"));
-          return cp;
+            return null;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
         return null;
     }
-    catch (SQLException ex){
-        // handle any errors
-        System.out.println("SQLException: " + ex.getMessage());
-        System.out.println("SQLState: " + ex.getSQLState());
-        System.out.println("VendorError: " + ex.getErrorCode());
-    }
-    finally {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException sqlEx) { } // ignore
-
-            rs = null;
-        }
-
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException sqlEx) { } // ignore
-
-            stmt = null;
-        }
-    }
-    return null;
-  }
 }
